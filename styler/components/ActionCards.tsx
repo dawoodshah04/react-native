@@ -1,4 +1,4 @@
-import { Alert, Image, Linking, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Linking, Platform, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 
 export default function ActionCards() {
@@ -6,7 +6,7 @@ export default function ActionCards() {
     const openWebsite = async (websiteLink: string) => {
     
         const supported = await Linking.canOpenURL(websiteLink)
-
+    
         try {
             if(supported){
                 await Linking.openURL(websiteLink)
@@ -20,6 +20,18 @@ export default function ActionCards() {
           }
         
     }
+
+    //open location on maps directly
+    const shareLocation = () => {
+        if(Platform.OS === 'android'){
+            Linking.sendIntent('android.intent.action.VIEW',
+                [{key:'data', value:'geo:37.7749,-122.4194?q=San Francisco'}]);
+        }else{
+      Alert.alert('Info', 'Share feature is only available on Android');
+}
+
+}
+
 
   return (
     <View>
@@ -39,10 +51,13 @@ export default function ActionCards() {
         </View>
         <View style={styles.footerContainer}>
           <TouchableOpacity onPress={()=> openWebsite('https://science.nasa.gov/earth/facts/')}>
-            <Text style={styles.headerText}>Read more...</Text>
+            <Text style={[styles.btn]}>Read more...</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={()=> openWebsite('slack://open?team=123456/')}>
-            <Text style={styles.headerText}>Broken Link</Text>
+            <Text style={[styles.btn]}>Broken Link</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={shareLocation}>
+            <Text style={[styles.btn]}>Open Maps</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -51,19 +66,54 @@ export default function ActionCards() {
 }
 
 const styles = StyleSheet.create({
-    headingText:{color:'white'},
-    headingContainer:{},
-    card:{},
-    headerText:{color:'white',
-        marginBottom:4
+    headingText:{
+        color:'white',
+        fontWeight:'bold',
+        paddingHorizontal:8,
+        fontSize:24
+    },color:{
+        color:'white'
+    },
+    headingContainer:{
+        height:40,
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    card:{
+        marginHorizontal:12,
+        marginVertical:16,
+        borderRadius:8,
+        backgroundColor:'#ae3ff8',
+        flexDirection:'column',
+    },
+    headerText:{color:'black',
+        marginBottom:4,
+        fontWeight:'bold'
     },
     cardImage:{
-        height:180
+        height:180,
     },
     bodyContainer:{
-        
+        padding:8
     },
-    bodyText:{color:'white'},
-    footerContainer:{}
+    bodyText:{
+        color:'white'
+    },
+    footerContainer:{
+        padding:4,
+        color:'black',
+        fontSize:10,
+        flexDirection:'row',
+        justifyContent:'space-evenly'
+    },
+    btn:{
+        backgroundColor:'white',
+        fontSize:12,
+        borderRadius:4,
+        paddingHorizontal:4,
+        paddingVertical:4,
+        marginBottom:8
+    }
     
 });
